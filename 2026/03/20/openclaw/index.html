@@ -1,0 +1,559 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>openclaw_docker | 若邪的个人博客</title><meta name="author" content="ruoxie"><meta name="copyright" content="ruoxie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Ubuntu 22.04 LTS使用docker部署openclaw,并接入飞书 本篇将手把手详细讲述如何在Ubuntu 22.04使用docker部署openclaw,并接入飞书">
+<meta property="og:type" content="article">
+<meta property="og:title" content="openclaw_docker">
+<meta property="og:url" content="http://example.com/2026/03/20/openclaw/index.html">
+<meta property="og:site_name" content="若邪的个人博客">
+<meta property="og:description" content="Ubuntu 22.04 LTS使用docker部署openclaw,并接入飞书 本篇将手把手详细讲述如何在Ubuntu 22.04使用docker部署openclaw,并接入飞书">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/avatar.jpg">
+<meta property="article:published_time" content="2026-03-20T02:30:48.000Z">
+<meta property="article:modified_time" content="2026-03-20T06:20:26.223Z">
+<meta property="article:author" content="ruoxie">
+<meta property="article:tag" content="openclaw">
+<meta property="article:tag" content="ubuntu22.04 LTS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "openclaw_docker",
+  "url": "http://example.com/2026/03/20/openclaw/",
+  "image": "http://example.com/images/avatar.jpg",
+  "datePublished": "2026-03-20T02:30:48.000Z",
+  "dateModified": "2026-03-20T06:20:26.223Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "ruoxie",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2026/03/20/openclaw/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'openclaw_docker',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><style>
+  /* 1. 顶部封面：高度设为 600px，展示更多图片内容 */
+  #page-header.full_page {
+    height: 600px !important; 
+    background-size: cover !important;
+    /* 【关键】改为 15%，比 top 稍微下移一点点，既能保住头部，又能多看下半身 */
+    background-position: center 15% !important; 
+    background-attachment: scroll !important;
+    animation: ruoxie-slideshow 12s infinite !important;
+    position: relative;
+  }
+
+  @keyframes ruoxie-slideshow {
+    0%, 30% { background-image: url(/images/bg1.jpg); }
+    33%, 63% { background-image: url(/images/bg2.jpg); }
+    66%, 96% { background-image: url(/images/bg3.jpg); }
+    100% { background-image: url(/images/bg1.jpg); }
+  }
+
+  /* 2. 彻底去掉波浪 ::after 伪元素，防止遮挡图片下部 */
+  #page-header.full_page::after {
+    display: none !important;
+  }
+
+  /* 3. 【核心修改】消除缝隙，让内容紧贴图片底边 */
+  #content-inner {
+    /* 设为 0，让内容卡片紧紧挨着图片，不再有丑陋的白缝 */
+    margin-top: 0px !important; 
+    position: relative;
+    z-index: 10;
+  }
+
+  /* 3.1 【上移】将头像卡片上移，缩短与顶部图片的距离，并使其与顶部背景图有一点重叠效果 */
+  /* 侧边栏的第一个卡片（个人信息卡片） */
+  #aside-content > .card-widget:first-child {
+    margin-top: -80px !important; /* 保持上移 */
+  }
+  
+  /* 4. 【修改】将卡片背景改为不透明的纯白，消除毛玻璃/半透明效果 */
+  #content-inner .recent-post-item, #aside-content .card-widget {
+    background: #ffffff !important; /* 纯白色背景 */
+    backdrop-filter: none; /* 移除毛玻璃效果 */
+    -webkit-backdrop-filter: none;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+  }
+  
+  /* 8. 【新增】确保页面主体背景是白色，配合主题默认设置 */
+  #page-content {
+    background-color: var(--body-bg, #ffffff) !important; /* 使用主题的页面背景变量，默认为白色，支持深色模式切换 */
+  }
+
+  /* 5. 隐藏向下的小箭头 */
+  #scroll-down {
+    display: none !important;
+  }
+
+  /* 6. 背景切换过渡 */
+  #page-header.full_page {
+    transition: background-image 1.5s ease-in-out !important;
+  }
+
+  /* 7. 调整标题位置，使其在 600px 背景中更协调 */
+  #site-info {
+    padding-top: 100px;
+  }
+</style>
+<meta name="generator" content="Hexo 8.1.1"></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/2026/03/20/openclaw/openclaw2.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/images/avatar.jpg" alt="Logo"><span class="site-name">若邪的个人博客</span></a><a class="nav-page-title" href="/"><span class="site-name">openclaw_docker</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">openclaw_docker</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-20T02:30:48.000Z" title="发表于 2026-03-20 10:30:48">2026-03-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-03-20T06:20:26.223Z" title="更新于 2026-03-20 14:20:26">2026-03-20</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Ubuntu-22-04-LTS使用docker部署openclaw-并接入飞书"><a href="#Ubuntu-22-04-LTS使用docker部署openclaw-并接入飞书" class="headerlink" title="Ubuntu 22.04 LTS使用docker部署openclaw,并接入飞书"></a>Ubuntu 22.04 LTS使用docker部署openclaw,并接入飞书</h1><blockquote>
+<p>本篇将手把手详细讲述如何在Ubuntu 22.04使用docker部署openclaw,并接入飞书</p>
+</blockquote>
+<span id="more"></span>
+
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ol>
+<li><a href="#%E4%B8%80-Docker-%E9%83%A8%E7%BD%B2-OpenClaw">Docker 部署 OpenClaw</a></li>
+<li><a href="#%E4%BA%8C-%E6%8E%A5%E5%85%A5%E6%A8%A1%E5%9E%8B">接入大模型</a></li>
+<li><a href="#%E4%B8%89-%E6%8E%A5%E5%85%A5%E9%A3%9E%E4%B9%A6">接入飞书机器人</a></li>
+</ol>
+<hr>
+<h2 id="一-Docker-部署-OpenClaw"><a href="#一-Docker-部署-OpenClaw" class="headerlink" title="一  Docker 部署 OpenClaw"></a>一  Docker 部署 OpenClaw</h2><h3 id="1-1-获取-OpenClaw-源码与环境准备"><a href="#1-1-获取-OpenClaw-源码与环境准备" class="headerlink" title="1.1 获取 OpenClaw 源码与环境准备"></a>1.1 获取 OpenClaw 源码与环境准备</h3><ul>
+<li><code>mkdir -p ~/openclaw-dev/workspace</code>：<strong>创建并进入工作目录</strong>。<br> 我们先在用户目录下创建一个名为 <code>openclaw-dev</code> 的专用文件夹。这样可以保持项目文件的整洁，避免和之前的 Linux 学习资料混在一起。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p ~/openclaw-dev/workspace</span><br><span class="line"><span class="built_in">cd</span> ~/openclaw-dev</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>export http_proxy=...</code>：<strong>为当前终端设置网络代理</strong>。<br> 由于国内连接 GitHub 有时速度较慢或连接失败，我们需要配置局域网内的代理服务器。注意：这个设置只在当前这个终端窗口生效，如果你关了重开，需要重新输入一遍。这里要注意后面的代理填写你自己的，如果没有代理用镜像网站下载源码也可以。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> http_proxy=http://192.168.108.231:8080</span><br><span class="line"><span class="built_in">export</span> https_proxy=http://192.168.108.231:8080</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li><code>git clone ...</code>：<strong>克隆 OpenClaw 源码到本地</strong>。<br> 这一步是从 GitHub 官方仓库将完整的项目代码拉取到本地，并存放进 <code>source-code</code> 文件夹中。如果你之前配置了代理环境，这一步下载的速度会非常快，不会一直卡在 0%。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/openclaw/openclaw.git source-code</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>ls -l source-code</code>：<strong>检查文件夹内容是否完整</strong>。<br> 代码克隆完后，我们习惯性地用 <code>ls -l</code> 查看一下 <code>source-code</code> 文件夹内的文件列表。如果能看到像 <code>docker-compose.yml</code> 或者 <code>README.md</code> 这样的文件，说明源码已经成功下载到本地，可以准备进行下一步部署了。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -l source-code</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>vi Dockerfile</code>：<strong>创建我们的项目文件</strong>。<br> 这里的话vi是采用linux自带的vim编辑器，vim编辑器刚开始用起来可能不习惯，用久会发现挺方便的。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi Dockerfile</span><br></pre></td></tr></table></figure>
+
+<p>在vi Dockerfile打开文件以后，我们先点Esc,然后在下面输入 :set paste 按回车（Enter） 再输入i 进入全局粘贴模式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:<span class="built_in">set</span> <span class="built_in">paste</span></span><br></pre></td></tr></table></figure>
+
+<p>右键空白处点击paste粘贴我们的Dockerfile代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">FROM ubuntu:22.04</span><br><span class="line"></span><br><span class="line"># 防止安装过程中的交互询问</span><br><span class="line">ENV DEBIAN_FRONTEND=noninteractive</span><br><span class="line">ENV TZ=Asia/Shanghai</span><br><span class="line"></span><br><span class="line"># 1. 安装基础编译依赖</span><br><span class="line">RUN apt update &amp;&amp; apt install -y \</span><br><span class="line">    curl git vim gcc g++ cmake build-essential sudo tzdata \</span><br><span class="line">    &amp;&amp; ln -fs /usr/share/zoneinfo/$&#123;TZ&#125; /etc/localtime \</span><br><span class="line">    &amp;&amp; echo $&#123;TZ&#125; &gt; /etc/timezone \</span><br><span class="line">    &amp;&amp; dpkg-reconfigure --frontend noninteractive tzdata \</span><br><span class="line">    &amp;&amp; rm -rf /var/lib/apt/lists/*</span><br><span class="line"></span><br><span class="line"># 2. 安装 Node.js LTS</span><br><span class="line">RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \</span><br><span class="line">    &amp;&amp; apt-get install -y nodejs</span><br><span class="line"></span><br><span class="line"># 3. 安装 pnpm 并设置国内镜像源（确保后续安装依赖快）</span><br><span class="line">RUN npm install -g pnpm &amp;&amp; \</span><br><span class="line">    pnpm config set registry https://registry.npmmirror.com</span><br><span class="line"></span><br><span class="line"># 4. 设置工作目录并将你拉好的源码拷贝进去</span><br><span class="line">WORKDIR /app</span><br><span class="line">COPY ./source-code /app</span><br><span class="line"></span><br><span class="line"># 5. 编译构建</span><br><span class="line">RUN pnpm install &amp;&amp; pnpm ui:build &amp;&amp; pnpm build</span><br><span class="line"></span><br><span class="line"># 6. 配置环境路径 (核心修复在这里)</span><br><span class="line"># 手动定义 PNPM 的全局 bin 目录，避免 pnpm setup 报错</span><br><span class="line">ENV PNPM_HOME=&quot;/root/.local/share/pnpm&quot;</span><br><span class="line">ENV PATH=&quot;$PNPM_HOME:$PATH&quot;</span><br><span class="line"></span><br><span class="line"># 使用强制指定 SHELL 的方式运行 link</span><br><span class="line">RUN SHELL=/bin/bash pnpm link --global</span><br><span class="line"></span><br><span class="line">EXPOSE 18789</span><br><span class="line"></span><br><span class="line">CMD [&quot;/bin/bash&quot;]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-构建镜像并且启动容器"><a href="#1-2-构建镜像并且启动容器" class="headerlink" title="1.2 构建镜像并且启动容器"></a>1.2 构建镜像并且启动容器</h3><ul>
+<li><code>sudo docker build -t openclaw-custom .</code>：<strong>构建并生成本地镜像</strong>。<br> 这一步是让 Docker 根据当前目录下的 <code>Dockerfile</code> 配置文件，把 OpenClaw 的源码和运行环境打包成一个叫 <code>openclaw-custom</code> 的镜像。注意命令最后的那个点 <code>.</code>，它代表在当前文件夹下查找配置，千万不能漏掉。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> docker build -t openclaw-custom .</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>sudo docker run -it ...</code>：<strong>正式启动并运行 OpenClaw 容器</strong>。<br> 这是让程序真正“活”起来的关键命令。<code>-p 18789:18789</code> 是将容器内部的端口映射到主机的 18789 端口，方便后续访问；<code>-v</code> 参数则是将本地的 <code>workspace</code> 文件夹挂载到容器内部，这样所有的配置文件和聊天记录都会保存在本地，即使容器删了数据也不会丢失。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> docker run -it --name my-openclaw \</span><br><span class="line">  -p 18789:18789 \</span><br><span class="line">  -v ~/openclaw-dev/workspace:/root/.openclaw \</span><br><span class="line">  openclaw-custom</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li><code>⚠️ 特别注意事项</code>：<strong>请勿关闭当前终端，确保容器持续运行</strong>。<br> 由于我们在启动命令中使用了 <code>-it</code> 参数（交互模式），OpenClaw 此时是在前台运行的。如果你直接关闭这个终端窗口或按下 <code>Ctrl + C</code>，容器会立即停止。<strong>请务必保持这个窗口处于开启状态</strong>，因为接下来的“二 接入模型”和“三 接入飞书”的所有配置指令，都必须在容器正常运行的过程中才能实时生效并进行功能调试。</li>
+</ul>
+<h2 id="二-接入模型"><a href="#二-接入模型" class="headerlink" title="二  接入模型"></a>二  接入模型</h2><h3 id="2-1-注册并登陆MiniMax-并获取API密钥"><a href="#2-1-注册并登陆MiniMax-并获取API密钥" class="headerlink" title="2.1 注册并登陆MiniMax,并获取API密钥"></a>2.1 注册并登陆MiniMax,并获取API密钥</h3><p>在 OpenClaw 部署完成后，我们需要为它接入一个“大脑”。这里我们选择接入目前国产大模型中表现非常出色的 <strong>MiniMax</strong>（海螺 AI），新用户有15元的免费额度。</p>
+<ul>
+<li><p><code>访问 MiniMax 开放平台</code>：<strong>注册并登录开发者账号</strong>。<br> 首先点击 <a target="_blank" rel="noopener" href="https://platform.minimaxi.com/docs/guides/models-intro">MiniMax 开放平台官网</a> 进行注册。目前 MiniMax 的模型（如 abab 系列）在逻辑推理和对话流畅度上非常优秀，是接入 OpenClaw 的极佳选择。</p>
+</li>
+<li><p><code>创建 API Key</code>：<strong>获取模型调用凭证</strong>。<br> 登录后台后，找到“账户管理”或“API 密钥”页面，点击创建一个新的 Key。<strong>请注意：</strong> 这串以 <code>sk-</code> 开头的密钥是 OpenClaw 调用大模型的唯一凭据，请务必妥善保管，不要泄露。</p>
+</li>
+</ul>
+<p><img src="/2026/03/20/openclaw/api.png" alt="创建API Key"></p>
+<h3 id="2-2-配置OpenClaw模型API"><a href="#2-2-配置OpenClaw模型API" class="headerlink" title="2.2 配置OpenClaw模型API"></a>2.2 配置OpenClaw模型API</h3><ul>
+<li><code>openclaw configure</code>：<strong>启动 OpenClaw 交互式设置界面</strong>。<br> 在刚才保持开启的终端窗口中，输入这个命令。它会弹出一个非常友好的菜单，带你一步步完成“大脑”的联网设置。在这里，我们可以直接输入刚刚从 MiniMax 拿到的 API Key、模型名称以及 Base URL。相比于手动去修改复杂的 YAML 配置文件，这个交互式方法不仅效率高，而且不容易出错，非常适合新手。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw configure</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2026/03/20/openclaw/api1.png" alt="创建API Key"></p>
+<ul>
+<li><code>使用上下键选择本地（Local）回车</code>：<strong>设置网关（Gateway）的运行位置</strong>。<br> 在执行 <code>openclaw configure</code> 后，第一个弹出的问题是询问网关（Gateway）运行在哪里。由于我们刚才已经通过 Docker 在这台机器上启动了服务，所以这里直接用键盘方向键选择第一个 <strong><code>Local (this machine)</code></strong> 并按回车（Enter）。这样 OpenClaw 就会默认通过本地地址 <code>127.0.0.1:18789</code> 来进行内部通信。</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">◆  Where will the Gateway run?</span><br><span class="line">│  ● Local (this machine) (Gateway reachable (ws://127.0.0.1:18789))</span><br><span class="line">│  ○ Remote (info-only)</span><br><span class="line">└</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>使用上下键选择 Model 选项并回车</code>：<strong>进入模型提供商与凭据（Credentials）配置界面</strong>。<br> 在主配置菜单中，我们需要通过上下键选中 <strong><code>Model</code></strong>。这一项是整个 OpenClaw 的“灵魂”，负责对接 AI 模型。选中它并按回车后，系统会进一步询问你使用的是哪家 AI 提供商（比如 MiniMax 或 OpenAI），以及你刚才在网页后台拿到的那串 <code>sk-</code> 开头的 API 密钥。</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">◆  Select sections to configure</span><br><span class="line">│  ○ Workspace</span><br><span class="line">│  ● Model (Pick provider + credentials)</span><br><span class="line">│  ○ Web tools</span><br><span class="line">│  ○ Gateway</span><br><span class="line">│  ○ Daemon</span><br><span class="line">│  ○ Channels</span><br><span class="line">│  ○ Skills</span><br><span class="line">│  ○ Health check</span><br><span class="line">│  ○ Continue</span><br><span class="line">└</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>使用上下键选择 MiniMax 选项并回车</code>：<strong>确定模型提供商（Model Provider）</strong>。<br> 因为我们刚才在 MiniMax 官网注册并拿到了 Key，所以这里直接在列表中选中 <strong><code>MiniMax</code></strong>。OpenClaw 的配置非常智能，如果你是用的 DeepSeek、OpenAI 或者其他的国产模型，就在这里对应的选上就行。选定后，程序会自动加载适合 MiniMax 的参数模板。</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">◆  Model/auth provider</span><br><span class="line">...</span><br><span class="line">│  ● MiniMax</span><br><span class="line">...</span><br><span class="line">└</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>选择 MiniMax API key (CN) 并回车</code>：<strong>确定认证方式与连接端点</strong>。<br> 这一步是选择连接 MiniMax 服务的认证方式。为了获得最佳的连接速度和稳定性，我们选择通过 <strong><code>API key (CN)</code></strong>（国内节点）进行连接。目前 MiniMax 的 M2.5 系列模型性能和对话效果都非常出色，选择这个国内端点（api.minimaxi.com）可以有效避免网络延迟带来的卡顿。</li>
+</ul>
+<p><img src="/2026/03/20/openclaw/minimax.png" alt="MiniMax API key"></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">◆  MiniMax auth method</span><br><span class="line">│  ● MiniMax API key (CN) (CN endpoint - api.minimaxi.com)</span><br><span class="line">│  ○ MiniMax API key (Global)</span><br><span class="line">│  ○ MiniMax OAuth (CN)</span><br><span class="line">│  ○ MiniMax OAuth (Global)</span><br><span class="line">│  ○ Back</span><br><span class="line">└</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>输入 MiniMax API 密钥并回车</code>：<strong>填入调用凭证完成身份认证</strong>。<br> 这一步我们需要把之前在 MiniMax 开放平台后台获取的那串以 <code>sk-</code> 开头的密钥复制并粘贴进来。在终端里，你通常可以通过<strong>点击鼠标右键</strong>或者按 <code>Shift + Insert</code> 来完成粘贴。这是大模型识别开发者身份的唯一凭证，填入后 OpenClaw 就能成功连接上 MiniMax 的服务器开始对话了。</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">◆  Enter MiniMax China API key</span><br><span class="line">│  sk-api-_3o3***************************skE_ZM</span><br><span class="line">└</span><br></pre></td></tr></table></figure>
+
+<p><strong>直接按回车Enter</strong></p>
+<p><img src="/2026/03/20/openclaw/api2.png" alt="MiniMax API key"></p>
+<p><strong>选择continue,再按回车</strong></p>
+<p><img src="/2026/03/20/openclaw/api3.png" alt="MiniMax API key"></p>
+<div class="note success flat"><p>🎉 <strong>模型连接成功！</strong><br>至此，我们的模型 API 配置就彻底完成了。现在，OpenClaw 已经成功获得了 MiniMax 的“大脑”支持。后续我们就可以通过 OpenClaw 来调用 MiniMax 模型进行各种智能任务的处理了。</p>
+</div>
+
+<h2 id="三-接入飞书"><a href="#三-接入飞书" class="headerlink" title="三  接入飞书"></a>三  接入飞书</h2><h3 id="3-1-访问飞书平台创建机器人"><a href="#3-1-访问飞书平台创建机器人" class="headerlink" title="3.1  访问飞书平台创建机器人"></a>3.1  访问飞书平台创建机器人</h3><p>在配置好模型“大脑”后，我们需要给 OpenClaw 找一个互动的窗口。飞书机器人是一个非常完美的方案，它支持丰富的消息格式，且配置流程标准，是目前实现移动端 AI 交互的首选。</p>
+<ul>
+<li><code>访问飞书开放平台</code>：<strong>注册并登录开发者账号</strong>。<br> 首先点击 <a target="_blank" rel="noopener" href="https://open.feishu.cn/">飞书开放平台官网</a>。这里是所有飞书机器人和自动化工具的“控制中心”。你需要使用自己的飞书账号登录，并进入右上角的“控制台”界面，我们接下来的所有应用创建和权限配置都将在这里完成。</li>
+</ul>
+<p><img src="/2026/03/20/openclaw/book1.png" alt="MiniMax API key"></p>
+<ul>
+<li><code>创建自建应用</code>：<strong>开启你的机器人开发之旅</strong>。<br> 在开发者后台点击绿色的“创建自建应用”按钮。为你的机器人起一个响亮的名字（如：OpenClaw_Bot），并上传一个好看的图标。创建成功后，系统会自动为你生成 <strong>App ID</strong> 和 <strong>App Secret</strong>，这两串字符就是机器人的“身份证号”，请务必妥善保存。</li>
+</ul>
+<p><img src="/2026/03/20/openclaw/book2.png" alt="MiniMax API key"></p>
+<ul>
+<li><code>填写机器人名称</code></li>
+</ul>
+<p><img src="/2026/03/20/openclaw/bot.png" alt="MiniMax API key"></p>
+<ul>
+<li><code>选择“添加应用能力”</code>：<strong>为自建应用开启机器人功能模块</strong>。<br> 在应用管理详情页的左侧菜单中，找到并点击 <strong>“添加应用能力”</strong>。在弹出的选项卡中选择“按能力添加”，在列表中找到 <strong>“机器人”</strong> 选项并点击右侧的“添加”按钮。这一步是赋予应用对话能力的“总开关”，只有开启了机器人功能，OpenClaw 才能通过飞书的 IM 接口实现消息的实时收发。</li>
+</ul>
+<p><img src="/2026/03/20/openclaw/bot2.png" alt="MiniMax API key"></p>
+<ul>
+<li><code>点击“批量导入/导出权限”</code>：<strong>一键配置机器人必备的各项功能权限</strong>。<br> 在权限管理页面，由于飞书的细分权限非常多，手动一个一个勾选既费时又容易出错。我们直接点击右侧的“批量导入&#x2F;导出”，在弹出框里选择“导入权限”。这一步是确保 OpenClaw 能够正常“听见”用户说话（读取消息）、“回复”消息（以应用身份发送消息）以及处理图片和文件的核心前提。</li>
+</ul>
+<p><img src="/2026/03/20/openclaw/bot3.png" alt="MiniMax API key"></p>
+<ul>
+<li><code>导入下面的JSON</code></li>
+</ul>
+<p><img src="/2026/03/20/openclaw/bot4.png" alt="MiniMax API key"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	<span class="string">&quot;scopes&quot;</span>: &#123;</span><br><span class="line">		<span class="string">&quot;tenant&quot;</span>: [</span><br><span class="line">			<span class="string">&quot;aily:file:read&quot;</span>,</span><br><span class="line">			<span class="string">&quot;aily:file:write&quot;</span>,</span><br><span class="line">			<span class="string">&quot;application:application.app_message_stats.overview:readonly&quot;</span>,</span><br><span class="line">			<span class="string">&quot;application:application:self_manage&quot;</span>,</span><br><span class="line">			<span class="string">&quot;application:bot.menu:write&quot;</span>,</span><br><span class="line">			<span class="string">&quot;cardkit:card:write&quot;</span>,</span><br><span class="line">			<span class="string">&quot;contact:user.employee_id:readonly&quot;</span>,</span><br><span class="line">			<span class="string">&quot;corehr:file:download&quot;</span>,</span><br><span class="line">			<span class="string">&quot;docs:document.content:read&quot;</span>,</span><br><span class="line">			<span class="string">&quot;event:ip_list&quot;</span>,</span><br><span class="line">			<span class="string">&quot;im:chat&quot;</span>,</span><br><span class="line">			<span class="string">&quot;im:chat.access_event.bot_p2p_chat:read&quot;</span>,</span><br><span class="line">			<span class="string">&quot;im:chat.members:bot_access&quot;</span>,</span><br><span class="line">			<span class="string">&quot;im:message&quot;</span>,</span><br><span class="line">			<span class="string">&quot;im:message.group_at_msg:readonly&quot;</span>,</span><br><span class="line">			<span class="string">&quot;im:message.group_msg&quot;</span>,</span><br><span class="line">			<span class="string">&quot;im:message.p2p_msg:readonly&quot;</span>,</span><br><span class="line">			<span class="string">&quot;im:message:readonly&quot;</span>,</span><br><span class="line">			<span class="string">&quot;im:message:send_as_bot&quot;</span>,</span><br><span class="line">			<span class="string">&quot;im:resource&quot;</span>,</span><br><span class="line">			<span class="string">&quot;sheets:spreadsheet&quot;</span>,</span><br><span class="line">			<span class="string">&quot;wiki:wiki:readonly&quot;</span></span><br><span class="line">		],</span><br><span class="line">		<span class="string">&quot;user&quot;</span>: [<span class="string">&quot;aily:file:read&quot;</span>, <span class="string">&quot;aily:file:write&quot;</span>, <span class="string">&quot;im:chat.access_event.bot_p2p_chat:read&quot;</span>]</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>创建并发布初始版本</code>：<strong>激活应用功能以解锁后续配置</strong>。<br> 在飞书后台的左侧菜单中，找到并点击 <strong>“版本管理与发布”</strong>。点击“创建版本”，填入一个版本号（例如 <code>1.0.0</code>），并简单写一下版本说明。<strong>请注意：</strong> 飞书的逻辑是“先发布，后生效”。虽然我们后面可能还会修改权限或回调地址，但必须先发布这个初始版本，飞书才会允许我们开启下一步的“事件订阅”功能。自建应用通常在点击“申请发布”后会立即通过审核。</li>
+</ul>
+<p><img src="/2026/03/20/openclaw/bot5.png" alt="MiniMax API key"></p>
+<ul>
+<li><code>随意填写，保存发布即可</code></li>
+</ul>
+<p><img src="/2026/03/20/openclaw/bot6.png" alt="MiniMax API key"></p>
+<ul>
+<li><code>进入“凭证与基础信息”页面</code>：<strong>获取并记录 App ID 与 App Secret</strong>。<br> 在飞书开发者后台的左侧导航栏中，点击 <strong>“凭证与基础信息”</strong>。这里展示了该自建应用最核心的两个身份凭据：<strong>App ID</strong>（应用唯一标识）和 <strong>App Secret</strong>（应用密钥）。你可以把它们理解为机器人的“账号”和“密码”。OpenClaw 必须持有这两个凭证，才能代表这个自建应用合法地接入飞书服务器。请点击右侧的复制按钮，将这两串字符暂时记录在记事本中，我们马上就要在终端配置里用到它们。</li>
+</ul>
+<p><img src="/2026/03/20/openclaw/bot7.png" alt="MiniMax API key"></p>
+<ul>
+<li><code>进入“机器人”页面</code>：<strong>机器人自定义菜单</strong><br>  这个一定要配置，你电脑端和手机端的飞书才能够给机器人发送消息，点击 “开启”</li>
+</ul>
+<p><img src="/2026/03/20/openclaw/bot8.png" alt="MiniMax API key"></p>
+<ul>
+<li><code>随意填写，保存即可</code></li>
+</ul>
+<p><img src="/2026/03/20/openclaw/bot9.png" alt="MiniMax API key"></p>
+<h3 id="3-2-配置-OpenClaw-飞书接口通道"><a href="#3-2-配置-OpenClaw-飞书接口通道" class="headerlink" title="3.2 配置 OpenClaw 飞书接口通道"></a>3.2 配置 OpenClaw 飞书接口通道</h3><ul>
+<li><code>openclaw configure</code>：<strong>再次启动 OpenClaw 交互式设置界面</strong>。<br> 为了把刚才在飞书后台拿到的“钥匙”交给 OpenClaw，我们需要再次执行这个命令。虽然菜单看起来一样，但这次我们的重点是配置“通道（Channels）”。这个交互式界面会指引我们将飞书的 App ID、App Secret 以及验证令牌（Verification Token）准确地填入系统，实现程序与飞书服务器的正式对接。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw configure</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2026/03/20/openclaw/api1.png" alt="创建API Key"></p>
+<ul>
+<li><code>使用上下键选择本地（Local）回车</code>：<strong>设置网关（Gateway）的运行位置</strong>。<br> 在执行 <code>openclaw configure</code> 后，第一个弹出的问题是询问网关（Gateway）运行在哪里。由于我们刚才已经通过 Docker 在这台机器上启动了服务，所以这里直接用键盘方向键选择第一个 <strong><code>Local (this machine)</code></strong> 并按回车（Enter）。这样 OpenClaw 就会默认通过本地地址 <code>127.0.0.1:18789</code> 来进行内部通信。</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">◆  Where will the Gateway run?</span><br><span class="line">│  ● Local (this machine) (Gateway reachable (ws://127.0.0.1:18789))</span><br><span class="line">│  ○ Remote (info-only)</span><br><span class="line">└</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>使用上下键选择 Channels 选项并回车</code>：进入消息通讯通道配置界面。<br>这是配置飞书的最关键入口！在主菜单中，我们要通过上下键选中 Channels。这里的“通道”指的就是 OpenClaw 接收和发送消息的途径。选中并回车后，我们就可以在里面添加 Lark（飞书的海外版名称，配置通用）作为我们的主通讯方式，并填入之前准备好的 App ID 等凭据。</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">◆  Select sections to configure</span><br><span class="line">│  ○ Workspace</span><br><span class="line">│  ○ Model (Pick provider + credentials)</span><br><span class="line">│  ○ Web tools</span><br><span class="line">│  ○ Gateway</span><br><span class="line">│  ○ Daemon</span><br><span class="line">│  ● Channels</span><br><span class="line">│  ○ Skills</span><br><span class="line">│  ○ Health check</span><br><span class="line">│  ○ Continue</span><br><span class="line">└</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>使用方向键选择 Feishu/Lark 并回车</code>：<strong>确定消息通讯的具体平台</strong>。<br> 进入通道选择菜单后，你会看到 OpenClaw 支持极广的平台列表（如 Telegram、Discord 等）。因为我们要对接的是国内的飞书，所以通过方向键向下滚动，找到 <strong><code>Feishu/Lark (飞书)</code></strong> 这一项。这里的“Lark”是飞书的海外版名称，在 OpenClaw 中它们共用同一套逻辑插件。选中它并回车，程序就会加载飞书专属的配置模板，准备让你填入 App ID 等信息。</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">◆  Select a channel</span><br><span class="line">...</span><br><span class="line">│  ○ Slack (Socket Mode)</span><br><span class="line">│  ○ Signal (signal-cli)</span><br><span class="line">│  ○ iMessage (imsg)</span><br><span class="line">│  ● Feishu/Lark (飞书) (plugin · install)</span><br><span class="line">│  ○ Nostr (NIP-04 DMs)</span><br><span class="line">...</span><br><span class="line">└</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li><code>直接按 回车 (Enter) 确认选择第一个选项</code>：<strong>Enter App Secret</strong>。</li>
+</ul>
+<p><img src="/2026/03/20/openclaw/book3.png" alt="MiniMax API key"></p>
+<ul>
+<li><code>输入飞书应用的 App ID 和 App Secret</code>：<strong>填入关键的应用凭据完成身份验证</strong>。<br> 这一步我们需要将刚才在飞书开发者后台“凭证与基础信息”页面复制的两串字符分别粘贴进来。<strong>App ID</strong> 是应用的唯一身份证号，而 <strong>App Secret</strong> 则是对应的安全密钥。有了这两项信息，OpenClaw 才能代表你创建的那个机器人合法地登录飞书服务器，并获得发送和接收消息的权限。粘贴时请仔细核对，确保没有多余的空格。</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">◆  Enter Feishu App ID</span><br><span class="line">│  cli_a90f*****89cd9</span><br><span class="line">└</span><br><span class="line"></span><br><span class="line">◆  Enter Feishu App Secret</span><br><span class="line">│  DAViZXBY*****fMyCV*****nC3Y</span><br><span class="line">└</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>选择中国站点 (Feishu (feishu.cn) - China) 并回车</code>：<strong>确定飞书服务器的区域域名（Domain）</strong>。<br> 由于我们是在飞书国内版官网（open.feishu.cn）创建的应用，所以这里必须选择第一个 <strong><code>Feishu (feishu.cn) - China</code></strong>。这决定了 OpenClaw 后续请求 API 时指向的服务器地址。如果选错成了国际版（Lark），会导致刚才填入的 App ID 和 Secret 无法被正确识别，提示鉴权失败。选定后按回车，程序将自动完成服务器区域的适配。</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">◆  Which Feishu domain?</span><br><span class="line">│  ● Feishu (feishu.cn) - China</span><br><span class="line">│  ○ Lark (larksuite.com) - International</span><br><span class="line">└</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>选择 Open 选项并回车</code>：<strong>设置群聊响应策略为开放模式（Open）</strong>。<br> 这一步决定了机器人在群聊中的表现。选择 <strong><code>Open - respond in all groups (requires mention)</code></strong> 后，只要有人在任何群聊中将机器人拉入群组并 <strong>@ 提及（Mention）</strong> 它，它都会自动给出回应。这种设置最为灵活，省去了手动配置繁琐“白名单（Allowlist）”的麻烦，非常适合日常办公交流或小团队协作。如果你希望它在所有群里都能随叫随到，选这一项准没错。</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">◆  Group chat policy</span><br><span class="line">│  ○ Allowlist - only respond in specific groups</span><br><span class="line">│  ● Open - respond in all groups (requires mention)</span><br><span class="line">│  ○ Disabled - don&#x27;t respond in groups</span><br><span class="line">└</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>选择 Finished (Done) 选项并回车</code>：<strong>完成通道添加并确认当前配置列表</strong>。<br> 在你成功填入飞书的 App ID、Secret 等各项参数后，系统会再次把你带回到这个通道选择列表。由于我们目前只需要配置飞书这一个通讯平台，所以这里不再继续添加其他选项，而是直接使用方向键找到最底部的 <strong><code>Finished (Done)</code></strong> 并按回车。这一步表示你已经完成了对所有通讯渠道的设定，准备返回到最开始的主菜单进行最后的全局保存。</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">◆  Select a channel</span><br><span class="line">...</span><br><span class="line">│  ○ LINE (Messaging API)</span><br><span class="line">│  ○ Zalo (Bot API)</span><br><span class="line">│  ● Finished (Done)</span><br><span class="line">└</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>使用方向键左右，选择 Yes 并回车</code>：<strong>进入私聊访问策略（DM access policies）配置界面</strong>。<br> 这一步是决定机器人私聊权限的安全设置。由于机器人接入了 AI 模型（会产生费用），为了防止陌生人随便拉你的机器人进行对话导致额度被刷爆，系统会询问你是否要配置私聊策略。选择 <strong><code>Yes</code></strong> 后，你可以进一步设定它是“公开模式（Public）”还是“配对模式（Pairing）”。建议在这里选择 Yes，这样你可以更精细地控制谁有权在私聊窗口使用你的 AI 助手。</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">◆  Configure DM access policies now? (default: pairing)</span><br><span class="line">│  ● Yes / ○ No</span><br><span class="line">└</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>直接选择 WebSocket (default)然后按回车</code>这个有弹出来就选择，没弹出来不需要管,下面的配置也是。</li>
+</ul>
+<p><img src="/2026/03/20/openclaw/book3.png" alt="MiniMax API key"></p>
+<ul>
+<li><code>使用上下键选择 Pairing 选项并回车</code>：<strong>设置私聊策略为推荐的“配对模式（Pairing）”</strong>。<br> 由于我们接入的大模型 API 是按量计费的，为了安全和省钱，建议在这里选中 <strong><code>Pairing (recommended)</code></strong>。这种模式非常巧妙：当陌生人在飞书上私聊你的机器人时，它不会立刻理人，而是需要你进行一个简单的“配对”确认。相比于完全公开（Open）或者死板的白名单（Allowlist），配对模式既保证了你的钱包安全，又保留了未来给朋友或同事使用的灵活性，是官方最推荐的平衡方案。</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">◆  Feishu DM policy</span><br><span class="line">│  ● Pairing (recommended)</span><br><span class="line">│  ○ Allowlist (specific users only)</span><br><span class="line">│  ○ Open (public inbound DMs)</span><br><span class="line">│  ○ Disabled (ignore DMs)</span><br><span class="line">└</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>选择 Continue (Done) 选项并回车</code>：<strong>保存所有配置并正式退出设置向导</strong>。<br> 这是整个交互式配置流程的最后一步。在完成了模型（Model）、网关（Gateway）以及飞书通道（Channels）的所有细节填报后，我们通过方向键选中最底部的 <strong><code>Continue (Done)</code></strong> 并按下回车。这一步会将你刚才在终端里辛苦输入的所有 API Key、App Secret 以及各项策略设置正式写入到配置文件中并立即生效。执行完这一步后，终端会退出配置界面并回到正常的命令行状态，说明 OpenClaw 的后台系统已经完全“武装完毕”，随时准备上线服务了。</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">◆  Select sections to configure</span><br><span class="line">...</span><br><span class="line">│  ○ Channels</span><br><span class="line">│  ○ Skills</span><br><span class="line">│  ○ Health check</span><br><span class="line">│  ● Continue (Done)</span><br><span class="line">└</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>选择“使用长连接接收事件”</code>：<strong>开启免公网 IP 的即时通讯模式</strong>。<br> 在飞书开发者后台左侧找到 <strong>“事件订阅”</strong> 页面，在顶部勾选 <strong>“使用长连接接收事件”</strong>。这种模式的巨大优势在于：它不需要你拥有公网 IP，也不需要配置复杂的 Webhook 域名和 SSL 证书。只要你的 OpenClaw 容器正在运行且能够联网，飞书就能通过这条“长连隧道”把消息实时推送到你的本地服务器上。</p>
+</li>
+<li><p><code>添加事件：im.message.receive_v1</code>：<strong>赋予机器人“听取”消息的能力</strong>。<br> 点击下方的“添加事件”按钮，在弹出的列表中搜索并选择 <strong><code>im.message.receive_v1</code></strong>（接收消息 v2.0）。这是机器人的“耳朵”，只有添加了这个事件，当你在飞书里对机器人说话时，飞书服务器才会知道需要把这些内容转发给 OpenClaw 处理。</p>
+</li>
+</ul>
+<p><img src="/2026/03/20/openclaw/bot10.png" alt="MiniMax API key"></p>
+<ul>
+<li><p><code>点击“创建版本”</code>：<strong>进入应用功能的正式发布流程</strong>。<br> 在左侧菜单栏找到 <strong>“版本管理与发布”</strong>，点击右上角的“创建版本”。这一步是把我们之前辛苦配置的权限、机器人开关以及 WebSocket 长连接等所有设置正式“打包”并推向线上的关键动作。</p>
+</li>
+<li><p><code>填写版本号与更新说明</code>：<strong>设定版本的唯一标识</strong>。<br> 在弹出页面中填入一个版本号（例如 <code>1.0.0</code>），并在更新说明里随便写点内容（比如“首次上线”或“更新事件订阅”）。这些信息主要是为了方便你自己以后管理应用时查看，不会影响机器人的运行。</p>
+</li>
+<li><p><code>点击“保存”并确认发布</code>：<strong>正式激活机器人服务</strong>。<br> 将页面拉到最下方，点击蓝色的 <strong>“保存”</strong> 按钮。保存成功后，系统会弹出一个申请发布的确认框，直接点击 <strong>“申请发布”</strong> 即可。对于自建应用，飞书通常会自动通过审核。一旦显示“已启用”，你的机器人就彻底“活”过来了，你现在就可以在飞书 App 里搜索并调戏它了！</p>
+</li>
+</ul>
+<p><img src="/2026/03/20/openclaw/bot11.png" alt="MiniMax API key"></p>
+<ul>
+<li><code>点击“打开应用”</code>：<strong>正式进入对话界面并开启智能交互</strong>。<br> 当你在飞书后台成功发布新版本后，你的飞书客户端（无论是手机端还是电脑端）会立刻收到一条来自该应用的官方通知提醒。点击提示框下方的 <strong>“打开应用”</strong> 按钮，系统就会自动为你跳转到与该机器人的私聊对话窗口。这是见证奇迹的时刻：试着给它发一条简单的消息（例如：“你好，你是谁？”），如果它能流畅地利用 MiniMax 的强大智慧给你回复，那就说明你的 OpenClaw 已经彻底部署成功并正式上线服务了！</li>
+</ul>
+<p><img src="/2026/03/20/openclaw/bot12.jpg" alt="MiniMax API key"></p>
+<h3 id="3-4-完成最后的身份配对-Pairing"><a href="#3-4-完成最后的身份配对-Pairing" class="headerlink" title="3.4 完成最后的身份配对 (Pairing)"></a>3.4 完成最后的身份配对 (Pairing)</h3><p>由于我们在安全设置中开启了“配对模式”，机器人第一次收到你的私聊时会进行身份确认。</p>
+<ul>
+<li><p><code>给机器人发送“你好”</code>：<strong>触发私聊配对申请</strong>。<br> 打开飞书，找到你刚创建的机器人并发送一句“你好”。此时机器人不会立刻回答你的问题，而是会识别出你是一个“新面孔”，并自动生成一条专属的授权指令发回给你（例如：<code>openclaw pairing approve feishu XXXXXX</code>）。这是 OpenClaw 的安全保护机制，确保只有经过你授权的账号才能使用 AI 额度。</p>
+</li>
+<li><p><code>将配对指令发送到终端</code>：<strong>完成身份绑定与正式授权</strong>。<br> 复制机器人发给你的那串以 <code>openclaw pairing</code> 开头的完整指令，回到你正在运行 OpenClaw 的终端窗口中，直接粘贴并回车执行。这一步相当于告诉程序：“这个飞书账号是我的，请允许它和我聊天”。执行成功后，终端会提示配对完成。现在，你可以尽情地在飞书里调教你的 AI 助手了！</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 示例指令（请复制你机器人发给你的那串真实指令在终端容器运行）：</span></span><br><span class="line">openclaw pairing approve feishu *******</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2026/03/20/openclaw/bot13.jpg" alt="MiniMax API key"></p>
+<div class="note success flat"><p>🎉 <strong>飞书连接成功！</strong><br>至此，我们的 OpenClaw 部署与飞书集成工作就彻底圆满完成了。现在，你已经可以随时随地在手机或电脑端打开飞书，搜索并调戏你的 AI 助手了。无论是处理复杂的逻辑任务，还是日常的闲聊问答，它都会利用 MiniMax 的强大“大脑”为你提供精准的服务。</p>
+</div>
+
+<ul>
+<li><code>⚠️ 关键提醒</code>：<strong>确保后台程序（Docker 容器）持续运行</strong>。<br> 虽然你现在可以在手机上愉快地聊天了，但请务必注意：<strong>你的机器人之所以能回消息，是因为你电脑（或服务器）里的 Docker 容器正在后台努力工作。</strong> 如果你关掉了刚才运行命令的终端窗口，或者你的电脑处于关机&#x2F;休眠状态，机器人就会因为失去后台支撑而“断线”无法回复。如果你希望实现 24 小时不间断的智能服务，建议后续将该服务迁移并部署到永不关机的云服务器上。</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">ruoxie</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/03/20/openclaw/">http://example.com/2026/03/20/openclaw/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">若邪的个人博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/openclaw/">openclaw</a><a class="post-meta__tags" href="/tags/ubuntu22-04-LTS/">ubuntu22.04 LTS</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/04/14/orangepi-ai-pro-Gemma-4/" title="orangepi ai pro-Gemma 4"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">orangepi ai pro-Gemma 4</div></div><div class="info-2"><div class="info-item-1">香橙派ai pro(8TOs)通过llama.cpp部署Gemma 4 本篇将手把手详细讲述如何在香橙派ai pro(8TOs)通过llama.cpp部署Gemma 4    目录 挂载 U 盘与扩充虚拟内存 (Swap) llama.cpp 搭建 模型下载 编译模型与运行推理测试   一  挂载 U 盘与扩充虚拟内存 Swap由于本地跑大模型非常吃内存，板载的 8G 往往不够用，我们首先需要利用外置 U 盘来扩容虚拟内存（Swap），防止编译或运行过程中因 OOM（内存溢出）而死机。 1.1 挂载 U盘 lsblk：查看系统所有块设备（磁盘）列表 在进行格式化或挂载操作之前，我们必须先确认 U 盘在系统里的“身份”。执行这个命令会列出所有连接到板子上的存储设备，通过容量大小（比如 32G、64G）可以很容易分辨出哪个是你的外部 U 盘，通常显示为 /dev/sdb 或 /dev/sdc。请务必核对清楚，防止误删了系统盘。  1lsblk    sudo mkdir -p /mnt/usb    sudo mount /dev/sdb1 /mnt/usb：创建 U 盘挂载目录和挂...</div></div></div></a><a class="pagination-related" href="/2026/01/24/linux-study/" title="orangepi zero2"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">orangepi zero2</div></div><div class="info-2"><div class="info-item-1">Linux 嵌入式开发学习笔记 欢迎来到我的 Linux 学习笔记。本篇将持续记录linux小白的成长之路    目录 SG90 舵机的开发 OLED 屏幕的点亮 OLED 屏幕命令行终端显示 TFT 屏幕部署 LVGL docker运行tensorflow模型   一  SG90 舵机的开发如下图所示，最便宜的舵机 sg90，常用三根或者四根接线，黄色为 PWM 信号控制用处：垃圾桶项目开盖用、智能小车的全比例转向、摄像头云台、机械臂等。 常见的有 0-90°、0-180°、0-360°。  1.1 接线说明 红线：VCC (5V) 棕线：GND 黄线：PWM 信号线  1.2 控制转角转角的控制，主要向黄色信号线“灌入”PWM信号。 PWM波的频率不能太高，50hz，即周期&#x3D;1&#x2F;频率&#x3D;1&#x2F;50&#x3D;0.02s，20ms左右数据：不同的PWM波形对应不同的旋转角度，以20ms为周期，50hz为频率的PWM波，定时器需要定时20ms,关心的单位0.5ms, 20ms &#x3D; 0.5ms * 40 1.3 linux的定时器分析：...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">ruoxie</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/ruoxie188" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:你的邮箱" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Ubuntu-22-04-LTS%E4%BD%BF%E7%94%A8docker%E9%83%A8%E7%BD%B2openclaw-%E5%B9%B6%E6%8E%A5%E5%85%A5%E9%A3%9E%E4%B9%A6"><span class="toc-number">1.</span> <span class="toc-text">Ubuntu 22.04 LTS使用docker部署openclaw,并接入飞书</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-number">1.1.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-Docker-%E9%83%A8%E7%BD%B2-OpenClaw"><span class="toc-number">1.2.</span> <span class="toc-text">一  Docker 部署 OpenClaw</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E8%8E%B7%E5%8F%96-OpenClaw-%E6%BA%90%E7%A0%81%E4%B8%8E%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.1 获取 OpenClaw 源码与环境准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E6%9E%84%E5%BB%BA%E9%95%9C%E5%83%8F%E5%B9%B6%E4%B8%94%E5%90%AF%E5%8A%A8%E5%AE%B9%E5%99%A8"><span class="toc-number">1.2.2.</span> <span class="toc-text">1.2 构建镜像并且启动容器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%8E%A5%E5%85%A5%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.3.</span> <span class="toc-text">二  接入模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E6%B3%A8%E5%86%8C%E5%B9%B6%E7%99%BB%E9%99%86MiniMax-%E5%B9%B6%E8%8E%B7%E5%8F%96API%E5%AF%86%E9%92%A5"><span class="toc-number">1.3.1.</span> <span class="toc-text">2.1 注册并登陆MiniMax,并获取API密钥</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E9%85%8D%E7%BD%AEOpenClaw%E6%A8%A1%E5%9E%8BAPI"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.2 配置OpenClaw模型API</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%8E%A5%E5%85%A5%E9%A3%9E%E4%B9%A6"><span class="toc-number">1.4.</span> <span class="toc-text">三  接入飞书</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E8%AE%BF%E9%97%AE%E9%A3%9E%E4%B9%A6%E5%B9%B3%E5%8F%B0%E5%88%9B%E5%BB%BA%E6%9C%BA%E5%99%A8%E4%BA%BA"><span class="toc-number">1.4.1.</span> <span class="toc-text">3.1  访问飞书平台创建机器人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E9%85%8D%E7%BD%AE-OpenClaw-%E9%A3%9E%E4%B9%A6%E6%8E%A5%E5%8F%A3%E9%80%9A%E9%81%93"><span class="toc-number">1.4.2.</span> <span class="toc-text">3.2 配置 OpenClaw 飞书接口通道</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E5%AE%8C%E6%88%90%E6%9C%80%E5%90%8E%E7%9A%84%E8%BA%AB%E4%BB%BD%E9%85%8D%E5%AF%B9-Pairing"><span class="toc-number">1.4.3.</span> <span class="toc-text">3.4 完成最后的身份配对 (Pairing)</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/04/26/rock-5T-Qwen2-5-3B/" title="rock 5T-Qwen2.5-3B">rock 5T-Qwen2.5-3B</a><time datetime="2026-04-26T04:19:30.000Z" title="发表于 2026-04-26 12:19:30">2026-04-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/04/18/orangepi-ai-pro-ChatGLM3-6B/" title="orangepi-ai-pro-ChatGLM3-6B">orangepi-ai-pro-ChatGLM3-6B</a><time datetime="2026-04-18T05:14:23.000Z" title="发表于 2026-04-18 13:14:23">2026-04-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/04/16/Radxa-Cubie-A7S-Gemma/" title="Radxa Cubie A7S Gemma4 (CPU)">Radxa Cubie A7S Gemma4 (CPU)</a><time datetime="2026-04-16T02:27:58.000Z" title="发表于 2026-04-16 10:27:58">2026-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/04/14/orangepi-ai-pro-Gemma-4/" title="orangepi ai pro-Gemma 4">orangepi ai pro-Gemma 4</a><time datetime="2026-04-14T09:05:07.000Z" title="发表于 2026-04-14 17:05:07">2026-04-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/03/20/openclaw/" title="openclaw_docker">openclaw_docker</a><time datetime="2026-03-20T02:30:48.000Z" title="发表于 2026-03-20 10:30:48">2026-03-20</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By ruoxie</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.1</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.3</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'ruoxie188/ruoxie188.github.io',
+      'data-repo-id': 'R_kgDORAXi_Q',
+      'data-category-id': 'DIC_kwDORAXi_c4C4cTS',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
