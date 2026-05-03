@@ -343,4 +343,44 @@
   } else {
     window.loadOtherComment = loadGiscus
   }
-})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
+})()</script></div><script>
+  function finalStyleInject() {
+    var target = document.getElementById('recent-posts');
+    if (!target || document.getElementById('gh-perfect-card')) return;
+
+    // 1. 创建卡片，直接借用 Butterfly 的 recent-post-item 类名，实现完美对齐
+    var card = document.createElement('div');
+    card.id = 'gh-perfect-card';
+    card.className = 'recent-post-item'; 
+    // 2. 内部样式微调：强制内边距和对齐
+    card.style.padding = '20px 30px';
+    card.style.flexDirection = 'column';
+    card.style.alignItems = 'flex-start';
+
+    // 3. 插入内容（ ruoxie188 的图片 + 标题）
+    card.innerHTML = `
+      <div style="font-size: 1.2em; font-weight: bold; margin-bottom: 15px; color: var(--font-color);">
+        <i class="fab fa-github" style="margin-right:8px"></i>GitHub 贡献墙
+      </div>
+      <div style="width:100%; overflow-x: auto;">
+        <img src="https://ghchart.rshah.org/40c463/ruoxie188" 
+             style="width:100%; min-width: 650px; height:auto; display:block;" 
+             alt="GitHub Contribution Chart">
+      </div>
+    `;
+
+    // 4. 精准插入：插在文章列表容器的最前面
+    target.insertBefore(card, target.firstChild);
+    
+    // 如果之前那个测试卡片还在，把它删掉
+    var oldCard = document.getElementById('gh-test-card');
+    if (oldCard) oldCard.remove();
+  }
+
+  // 各种时机触发，确保它能钻进去
+  finalStyleInject();
+  setTimeout(finalStyleInject, 500);
+  setTimeout(finalStyleInject, 1500);
+  document.addEventListener('pjax:complete', finalStyleInject);
+</script>
+<script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
