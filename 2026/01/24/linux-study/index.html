@@ -193,20 +193,30 @@
   /* --- [新增] 维什戴尔的走动动画（不影响其他样式） --- */
   #spine-container {
     position: fixed;
-    bottom: -40px; 
-    left: 0;
-    width: 350px;
-    height: 350px;
+    bottom: 5px; 
+    left: 10px;
+    width: 200px;
+    height: 200px;
     z-index: 9999;
     pointer-events: none; 
-    animation: pet-walk 35s infinite alternate ease-in-out !important;
+    animation: pet-walk 30s infinite ease-in-out !important;
   }
-  @keyframes pet-walk {
-    0% { transform: translateX(-50px) scaleX(1); }
-    45% { transform: translateX(calc(95vw - 300px)) scaleX(1); }
-    50% { transform: translateX(calc(95vw - 300px)) scaleX(-1); } 
-    95% { transform: translateX(-50px) scaleX(-1); }
-    100% { transform: translateX(-50px) scaleX(1); }
+   @keyframes pet-walk {
+    0% { 
+      transform: translateX(0) scaleX(1); /* 起点：面向右 */
+    }
+    45% { 
+      transform: translateX(200px) scaleX(1); /* 到达右侧：依然面向右 */
+    }
+    50% { 
+      transform: translateX(200px) scaleX(-1); /* 瞬时动作：原地转身面向左 */
+    }
+    95% { 
+      transform: translateX(0) scaleX(-1); /* 走回左侧：依然面向左 */
+    }
+    100% { 
+      transform: translateX(0) scaleX(1); /* 回到起点：转身面向右，开始下一次循环 */
+    }
   }
   @media screen and (max-width: 768px) { #spine-container { display: none; } }
 </style>
