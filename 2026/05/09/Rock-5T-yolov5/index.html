@@ -1,0 +1,456 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Rock 5T yolov5 | 若邪的个人博客</title><meta name="author" content="ruoxie"><meta name="copyright" content="ruoxie"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Radxa rock 5T 使用RKNN和NPu运行YOLOV5 本篇将手把手详细讲述如何在Radxa rock 5T 使用RKNN和NPu运行YOLOV5">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rock 5T yolov5">
+<meta property="og:url" content="http://example.com/2026/05/09/Rock-5T-yolov5/index.html">
+<meta property="og:site_name" content="若邪的个人博客">
+<meta property="og:description" content="Radxa rock 5T 使用RKNN和NPu运行YOLOV5 本篇将手把手详细讲述如何在Radxa rock 5T 使用RKNN和NPu运行YOLOV5">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/avatar.jpg">
+<meta property="article:published_time" content="2026-05-09T02:03:07.000Z">
+<meta property="article:modified_time" content="2026-05-09T06:05:18.743Z">
+<meta property="article:author" content="ruoxie">
+<meta property="article:tag" content="NPU">
+<meta property="article:tag" content="RKNN">
+<meta property="article:tag" content="Radxa rock 5T">
+<meta property="article:tag" content="YOLOV5">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Rock 5T yolov5",
+  "url": "http://example.com/2026/05/09/Rock-5T-yolov5/",
+  "image": "http://example.com/images/avatar.jpg",
+  "datePublished": "2026-05-09T02:03:07.000Z",
+  "dateModified": "2026-05-09T06:05:18.743Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "ruoxie",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2026/05/09/Rock-5T-yolov5/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Rock 5T yolov5',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/spine-player.css"><script src="/js/spine-player.js"></script><style>
+  /* --- [保留] 你原本的封面、轮播、卡片样式 --- */
+  #page-header.full_page {
+    height: 600px !important; 
+    background-size: cover !important;
+    background-position: center 15% !important; 
+    background-attachment: scroll !important;
+    animation: ruoxie-slideshow 12s infinite !important;
+    position: relative;
+  }
+  @keyframes ruoxie-slideshow {
+    0%, 30% { background-image: url(/images/bg1.jpg); }
+    33%, 63% { background-image: url(/images/bg2.jpg); }
+    66%, 96% { background-image: url(/images/bg3.jpg); }
+    100% { background-image: url(/images/bg1.jpg); }
+  }
+  #page-header.full_page::after { display: none !important; }
+  #content-inner { margin-top: 0px !important; position: relative; z-index: 10; }
+  #aside-content > .card-widget:first-child { margin-top: -80px !important; }
+  #content-inner .recent-post-item, #aside-content .card-widget {
+    background: #ffffff !important;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+  }
+  #page-content { background-color: var(--body-bg, #ffffff) !important; }
+  #scroll-down { display: none !important; }
+  #page-header.full_page { transition: background-image 1.5s ease-in-out !important; }
+  #site-info { padding-top: 100px; }
+
+  /* --- [新增] 维什戴尔的走动动画（不影响其他样式） --- */
+  #spine-container {
+    position: fixed;
+    bottom: 5px; 
+    left: 10px;
+    width: 200px;
+    height: 200px;
+    z-index: 9999;
+    pointer-events: none; 
+    animation: pet-walk 30s infinite ease-in-out !important;
+  }
+   @keyframes pet-walk {
+    0% { 
+      transform: translateX(0) scaleX(1); /* 起点：面向右 */
+    }
+    45% { 
+      transform: translateX(200px) scaleX(1); /* 到达右侧：依然面向右 */
+    }
+    50% { 
+      transform: translateX(200px) scaleX(-1); /* 瞬时动作：原地转身面向左 */
+    }
+    95% { 
+      transform: translateX(0) scaleX(-1); /* 走回左侧：依然面向左 */
+    }
+    100% { 
+      transform: translateX(0) scaleX(1); /* 回到起点：转身面向右，开始下一次循环 */
+    }
+  }
+  @media screen and (max-width: 768px) { #spine-container { display: none; } }
+</style>
+<meta name="generator" content="Hexo 8.1.1"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/2026/04/26/rock-5T-Qwen2-5-3B/rock3.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/images/avatar.jpg" alt="Logo"><span class="site-name">若邪的个人博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Rock 5T yolov5</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Rock 5T yolov5</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-05-09T02:03:07.000Z" title="发表于 2026-05-09 10:03:07">2026-05-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-05-09T06:05:18.743Z" title="更新于 2026-05-09 14:05:18">2026-05-09</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Radxa-rock-5T-使用RKNN和NPu运行YOLOV5"><a href="#Radxa-rock-5T-使用RKNN和NPu运行YOLOV5" class="headerlink" title="Radxa rock 5T 使用RKNN和NPu运行YOLOV5"></a>Radxa rock 5T 使用RKNN和NPu运行YOLOV5</h1><blockquote>
+<p>本篇将手把手详细讲述如何在Radxa rock 5T 使用RKNN和NPu运行YOLOV5</p>
+</blockquote>
+<span id="more"></span>
+
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ol>
+<li><a href="#%E4%B8%80-%E6%A8%A1%E5%9E%8B%E8%BD%AC%E6%8D%A2%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">模型转换环境搭建</a></li>
+<li><a href="#%E4%BA%8C-%E8%BD%AC%E6%8D%A2%E6%A8%A1%E5%9E%8B">转换模型</a></li>
+<li><a href="#%E4%B8%89-%E6%A8%A1%E5%9E%8B%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">模型运行环境搭建</a></li>
+<li><a href="#%E5%9B%9B-%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%9E%8B">运行模型</a></li>
+</ol>
+<hr>
+<h2 id="一-模型转换环境搭建"><a href="#一-模型转换环境搭建" class="headerlink" title="一  模型转换环境搭建"></a>一  模型转换环境搭建</h2><h3 id="1-1-创建文件夹"><a href="#1-1-创建文件夹" class="headerlink" title="1.1 创建文件夹"></a>1.1 创建文件夹</h3><p><strong>环境要求：ubuntu系统</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p ~/RK_YOLOR/workspace</span><br><span class="line"><span class="built_in">cd</span> ~/RK_YOLOR</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-生成Dockerfile"><a href="#1-2-生成Dockerfile" class="headerlink" title="1.2 生成Dockerfile"></a>1.2 生成Dockerfile</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">FROM ubuntu:20.04</span><br><span class="line"></span><br><span class="line">ENV DEBIAN_FRONTEND=noninteractive</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 安装你提供的所有系统依赖</span></span><br><span class="line">RUN apt-get update &amp;&amp; apt-get install -y \</span><br><span class="line">    git \</span><br><span class="line">    python3-pip \</span><br><span class="line">    python-is-python3 \</span><br><span class="line">    libxslt1-dev \</span><br><span class="line">    zlib1g-dev \</span><br><span class="line">    libglib2.0-dev \</span><br><span class="line">    libsm6 \</span><br><span class="line">    libgl1-mesa-glx \</span><br><span class="line">    libprotobuf-dev \</span><br><span class="line">    build-essential \</span><br><span class="line">    adb \</span><br><span class="line">    wget \</span><br><span class="line">    curl \</span><br><span class="line">    vim \</span><br><span class="line">    &amp;&amp; <span class="built_in">rm</span> -rf /var/lib/apt/lists/*</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 安装 Miniforge (用于管理 Python 3.8)</span></span><br><span class="line">RUN wget https://github.com/conda-forge/miniforge/releases/download/25.11.0-0/Miniforge3-25.11.0-0-Linux-x86_64.sh \</span><br><span class="line">    &amp;&amp; bash Miniforge3-25.11.0-0-Linux-x86_64.sh -b -p /opt/conda \</span><br><span class="line">    &amp;&amp; <span class="built_in">rm</span> Miniforge3-25.11.0-0-Linux-x86_64.sh</span><br><span class="line"></span><br><span class="line">ENV PATH=<span class="string">&quot;/opt/conda/bin:<span class="variable">$PATH</span>&quot;</span></span><br><span class="line"></span><br><span class="line">WORKDIR /root/yolor_project</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-构建镜像"><a href="#1-3-构建镜像" class="headerlink" title="1.3 构建镜像"></a>1.3 构建镜像</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> docker build -t rk3588-yolor-env .</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-4-启动并进入容器"><a href="#1-4-启动并进入容器" class="headerlink" title="1.4 启动并进入容器"></a>1.4 启动并进入容器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> docker run -it --name yolor-convert \</span><br><span class="line">    -v $(<span class="built_in">pwd</span>):/root/yolor_project \</span><br><span class="line">    rk3588-yolor-env /bin/bash</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-5-激活Conda环境"><a href="#1-5-激活Conda环境" class="headerlink" title="1.5 激活Conda环境"></a>1.5 激活Conda环境</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 初始化 conda</span></span><br><span class="line">conda init bash</span><br><span class="line"><span class="comment"># 2. 让刚才的修改立即生效</span></span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br><span class="line"><span class="comment"># 3. 现在激活环境</span></span><br><span class="line">conda activate yolor_env</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-6-克隆-RKNN-Toolkit2-仓库"><a href="#1-6-克隆-RKNN-Toolkit2-仓库" class="headerlink" title="1.6 克隆 RKNN-Toolkit2 仓库"></a>1.6 克隆 RKNN-Toolkit2 仓库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 因为设置了代理，这步会很快</span></span><br><span class="line">git <span class="built_in">clone</span> -b v2.3.0 https://github.com/airockchip/rknn-toolkit2.git</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-7-安装-Toolkit2-本体"><a href="#1-7-安装-Toolkit2-本体" class="headerlink" title="1.7 安装 Toolkit2 本体"></a>1.7 安装 Toolkit2 本体</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install rknn_toolkit2-2.3.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-8-验证安装"><a href="#1-8-验证安装" class="headerlink" title="1.8 验证安装"></a>1.8 验证安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c <span class="string">&quot;from rknn.api import RKNN; print(&#x27;RKNN Toolkit2 安装成功！&#x27;)&quot;</span></span><br></pre></td></tr></table></figure>
+<h2 id="二-转换模型"><a href="#二-转换模型" class="headerlink" title="二 转换模型"></a>二 转换模型</h2><h3 id="2-1-克隆-rknn-model-zoo-代码仓库"><a href="#2-1-克隆-rknn-model-zoo-代码仓库" class="headerlink" title="2.1 克隆 rknn_model_zoo 代码仓库"></a>2.1 克隆 rknn_model_zoo 代码仓库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> -b v2.3.0 https://github.com/airockchip/rknn_model_zoo.git</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-下载-yolov5s-relu-onnx-模型"><a href="#2-3-下载-yolov5s-relu-onnx-模型" class="headerlink" title="2.3 下载 yolov5s_relu.onnx 模型"></a>2.3 下载 yolov5s_relu.onnx 模型</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> rknn_model_zoo/examples/yolov5/model</span><br><span class="line"><span class="comment"># 下载预训练好的 yolov5s_relu.onnx 模型</span></span><br><span class="line">bash download_model.sh</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-4-ONNX转换为RKNN模型"><a href="#2-4-ONNX转换为RKNN模型" class="headerlink" title="2.4 ONNX转换为RKNN模型"></a>2.4 ONNX转换为RKNN模型</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/yolor_project/rknn_model_zoo/examples/yolov5/python</span><br><span class="line"></span><br><span class="line">python convert.py ../model/yolov5s_relu.onnx rk3588 i8 ../model/yolov5s_relu_rk3588.rknn</span><br></pre></td></tr></table></figure>
+<p><img src="/2026/05/09/Rock-5T-yolov5/yolo1.png" alt="模型转换成功"></p>
+<h2 id="三-模型板端运行环境搭建"><a href="#三-模型板端运行环境搭建" class="headerlink" title="三 模型板端运行环境搭建"></a>三 模型板端运行环境搭建</h2><h3 id="3-1-创建文件夹"><a href="#3-1-创建文件夹" class="headerlink" title="3.1 创建文件夹"></a>3.1 创建文件夹</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> rknn-yolor</span><br><span class="line"><span class="built_in">cd</span> rknn-yolor</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-上传模型文件和克隆-rknn-model-zoo-代码仓库"><a href="#3-2-上传模型文件和克隆-rknn-model-zoo-代码仓库" class="headerlink" title="3.2 上传模型文件和克隆 rknn_model_zoo 代码仓库"></a>3.2 上传模型文件和克隆 rknn_model_zoo 代码仓库</h3><a class="btn-beautify orange" target="_blank" rel="noopener" href="https://pan.baidu.com/s/1vckB2Cboyt83Q4cbmyIV1g?pwd=6qi9" title="点击前往百度网盘下载 (提取码: 6qi9)"><i class="fas fa-cloud-download-alt"></i><span>点击前往百度网盘下载 (提取码: 6qi9)</span></a>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install unzip</span><br><span class="line">unzip model.zip</span><br></pre></td></tr></table></figure>
+
+<p><strong>克隆 rknn_model_zoo 代码仓库</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/rknn-yolor</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/airockchip/rknn_model_zoo.git</span><br></pre></td></tr></table></figure>
+
+<p><strong>下载指定的rknn_toolkit_lite2</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/rknn-yolor</span><br><span class="line">wget https://github.com/airockchip/rknn-toolkit2/raw/master/rknn-toolkit-lite2/packages/rknn_toolkit_lite2-2.3.2-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-创建python虚拟环境和安装rknn-toolkit-lite2"><a href="#3-3-创建python虚拟环境和安装rknn-toolkit-lite2" class="headerlink" title="3.3 创建python虚拟环境和安装rknn_toolkit_lite2"></a>3.3 创建python虚拟环境和安装rknn_toolkit_lite2</h3><p><strong>安装 python3-venv</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install python3.11-venv</span><br></pre></td></tr></table></figure>
+
+<p><strong>创建虚拟环境（指定 python3.11)</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python3 -m venv rknn_env</span><br><span class="line"><span class="built_in">source</span> rknn_env/bin/activate</span><br></pre></td></tr></table></figure>
+
+<p><strong>安装必要依赖</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pip install --upgrade pip</span><br><span class="line"><span class="comment">#使用清华源安装opencv-python</span></span><br><span class="line">pip install opencv-python-headless -i https://pypi.tuna.tsinghua.edu.cn/simple</span><br></pre></td></tr></table></figure>
+
+<p><strong>安装下载的rknn_toolkit_lite2</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install rknn_toolkit_lite2-2.3.2-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-4-验证安装"><a href="#3-4-验证安装" class="headerlink" title="3.4 验证安装"></a>3.4 验证安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#验证opencv有没有安装</span></span><br><span class="line">python3 -c <span class="string">&quot;import cv2; print(&#x27;OpenCV version:&#x27;, cv2.__version__)&quot;</span></span><br><span class="line"><span class="comment">#验证RKNNLite能否正常使用</span></span><br><span class="line">python3 -c <span class="string">&quot;from rknnlite.api import RKNNLite; print(&#x27;安装成功！RKNNLite 可以正常导入。&#x27;)&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-5-代码兼容修改"><a href="#3-5-代码兼容修改" class="headerlink" title="3.5 代码兼容修改"></a>3.5 代码兼容修改</h3><p><strong>打开rknn_executor.py文件</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/rknn-yolor/rknn_model_zoo/py_utils</span><br><span class="line">vi rknn_executor.py</span><br></pre></td></tr></table></figure>
+<p><strong>完整修改所有代码</strong><br>键盘敲击ggdG清空内容，然后输入i粘贴下面代码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">from rknnlite.api import RKNNLite as RKNN</span><br><span class="line"></span><br><span class="line">class RKNN_model_container():</span><br><span class="line">    def __init__(self, model_path, target=None, device_id=None) -&gt; None:</span><br><span class="line">        rknn = RKNN()</span><br><span class="line">        rknn.load_rknn(model_path)</span><br><span class="line">        ret = rknn.init_runtime()</span><br><span class="line">        self.rknn = rknn</span><br><span class="line"></span><br><span class="line">    def run(self, inputs):</span><br><span class="line">        <span class="keyword">if</span> self.rknn is None:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;ERROR: rknn has been released&quot;</span>)</span><br><span class="line">            <span class="built_in">return</span> []</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> isinstance(inputs, list) or isinstance(inputs, tuple):</span><br><span class="line">            pass</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            inputs = [inputs]</span><br><span class="line"></span><br><span class="line">        result = self.rknn.inference(inputs=inputs)</span><br><span class="line"></span><br><span class="line">        <span class="built_in">return</span> result</span><br><span class="line"></span><br><span class="line">    def release(self):</span><br><span class="line">        self.rknn.release()</span><br><span class="line">        self.rknn = None</span><br></pre></td></tr></table></figure>
+
+<p><strong>打开yolov5.py文件</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/rknn-yolor/rknn_model_zoo/examples/yolov5/python/yolov5.py</span><br><span class="line">vi yolov5.py</span><br></pre></td></tr></table></figure>
+
+<p><strong>修改指定内容</strong><br>输入&#x2F;outputs 按回车（ENTER）跳到指定位置修改代码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">outputs = model.run([np.expand_dims(input_data, 0)])</span><br></pre></td></tr></table></figure>
+
+<h2 id="四-运行模型"><a href="#四-运行模型" class="headerlink" title="四 运行模型"></a>四 运行模型</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/rknn-yolor/rknn_model_zoo/examples/yolov5/python/</span><br><span class="line"><span class="comment"># 执行推理</span></span><br><span class="line">python3 yolov5.py --model_path ~/rknn-yolor/model/yolov5s_relu_rk3588.rknn --img_save</span><br></pre></td></tr></table></figure>
+<p><img src="/2026/05/09/Rock-5T-yolov5/yolo2.png" alt="模型成功运行"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">ruoxie</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/05/09/Rock-5T-yolov5/">http://example.com/2026/05/09/Rock-5T-yolov5/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">若邪的个人博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/NPU/">NPU</a><a class="post-meta__tags" href="/tags/Radxa-rock-5T/">Radxa rock 5T</a><a class="post-meta__tags" href="/tags/RKNN/">RKNN</a><a class="post-meta__tags" href="/tags/YOLOV5/">YOLOV5</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/04/26/rock-5T-Qwen2-5-3B/" title="rock 5T-Qwen2.5-3B"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">rock 5T-Qwen2.5-3B</div></div><div class="info-2"><div class="info-item-1">Radxa rock 5T 使用RKNN和NPU部署Qwen2.5-3B 本篇将手把手详细讲述如何在Radxa rock 5T 使用RKNN和NPU部署Qwen2.5-3B    目录 模型转换环境搭建 转换模型 模型运行环境搭建 运行模型   一  模型转换环境搭建1.1 创建文件夹环境要求：ubuntu系统 1234567cd ~mkdir RKSDKcd RKSDK# 创建模型存放目录mkdir models# 创建转换脚本工作目录mkdir workspace  1.2 生成Dockerfile1234567891011121314151617181920212223242526FROM ubuntu:20.04ENV DEBIAN_FRONTEND=noninteractive# 安装必要的基础工具RUN apt-get update &amp;&amp; apt-get install -y \    python3-pip \    git \    git-lfs \    wget \    curl \    vim \    &amp;&amp; rm -r...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/26/rock-5T-Qwen2-5-3B/" title="rock 5T-Qwen2.5-3B"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-26</div><div class="info-item-2">rock 5T-Qwen2.5-3B</div></div><div class="info-2"><div class="info-item-1">Radxa rock 5T 使用RKNN和NPU部署Qwen2.5-3B 本篇将手把手详细讲述如何在Radxa rock 5T 使用RKNN和NPU部署Qwen2.5-3B    目录 模型转换环境搭建 转换模型 模型运行环境搭建 运行模型   一  模型转换环境搭建1.1 创建文件夹环境要求：ubuntu系统 1234567cd ~mkdir RKSDKcd RKSDK# 创建模型存放目录mkdir models# 创建转换脚本工作目录mkdir workspace  1.2 生成Dockerfile1234567891011121314151617181920212223242526FROM ubuntu:20.04ENV DEBIAN_FRONTEND=noninteractive# 安装必要的基础工具RUN apt-get update &amp;&amp; apt-get install -y \    python3-pip \    git \    git-lfs \    wget \    curl \    vim \    &amp;&amp; rm -r...</div></div></div></a><a class="pagination-related" href="/2026/04/18/orangepi-ai-pro-ChatGLM3-6B/" title="orangepi-ai-pro-ChatGLM3-6B"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-18</div><div class="info-item-2">orangepi-ai-pro-ChatGLM3-6B</div></div><div class="info-2"><div class="info-item-1">香橙派ai pro(8TOs)部署ChatGLM3-6B 本篇将手把手详细讲述如何在香橙派ai pro(8TOs)部署ChatGLM3-6B  准备环境：香橙派aipro(8T) 8G&#x2F;16GTF卡 32G香橙派最小镜像 opiaipro_ubuntu22.04_minimal_aarch64_20250925.img   目录 拉取代码 算子配置 模型推理 推理测试   一  拉取代码并安装CANN开发包本地下载上传或者直接终端拉取 1.1 下载到本地PC并上传chatglm3-manual-reset-master.zip点击下载chatglm3源码 (ZIP)   unzip chatglm3-manual-reset-master.zip：解压我们的文件夹。  1unzip chatglm3-manual-reset-master.zip  终端gitee拉取chatglm3源码 1git clone https://gitee.com/wan-zutao/tiny-llama-manual-reset.git  1.2 安装CANN开发包安装Python依赖 ...</div></div></div></a><a class="pagination-related" href="/2026/04/14/orangepi-ai-pro-Gemma-4/" title="orangepi ai pro-Gemma 4"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-14</div><div class="info-item-2">orangepi ai pro-Gemma 4</div></div><div class="info-2"><div class="info-item-1">香橙派ai pro(8TOs)通过llama.cpp部署Gemma 4 本篇将手把手详细讲述如何在香橙派ai pro(8TOs)通过llama.cpp部署Gemma 4    目录 挂载 U 盘与扩充虚拟内存 (Swap) llama.cpp 搭建 模型下载 编译模型与运行推理测试   一  挂载 U 盘与扩充虚拟内存 Swap由于本地跑大模型非常吃内存，板载的 8G 往往不够用，我们首先需要利用外置 U 盘来扩容虚拟内存（Swap），防止编译或运行过程中因 OOM（内存溢出）而死机。 1.1 挂载 U盘 lsblk：查看系统所有块设备（磁盘）列表 在进行格式化或挂载操作之前，我们必须先确认 U 盘在系统里的“身份”。执行这个命令会列出所有连接到板子上的存储设备，通过容量大小（比如 32G、64G）可以很容易分辨出哪个是你的外部 U 盘，通常显示为 /dev/sdb 或 /dev/sdc。请务必核对清楚，防止误删了系统盘。  1lsblk    sudo mkdir -p /mnt/usb    sudo mount /dev/sdb1 /mnt/usb：创建 U 盘挂载目录和挂...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">ruoxie</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/ruoxie188" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:你的邮箱" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Radxa-rock-5T-%E4%BD%BF%E7%94%A8RKNN%E5%92%8CNPu%E8%BF%90%E8%A1%8CYOLOV5"><span class="toc-number">1.</span> <span class="toc-text">Radxa rock 5T 使用RKNN和NPu运行YOLOV5</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-number">1.1.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E6%A8%A1%E5%9E%8B%E8%BD%AC%E6%8D%A2%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.2.</span> <span class="toc-text">一  模型转换环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.1 创建文件夹</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E7%94%9F%E6%88%90Dockerfile"><span class="toc-number">1.2.2.</span> <span class="toc-text">1.2 生成Dockerfile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E6%9E%84%E5%BB%BA%E9%95%9C%E5%83%8F"><span class="toc-number">1.2.3.</span> <span class="toc-text">1.3 构建镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-%E5%90%AF%E5%8A%A8%E5%B9%B6%E8%BF%9B%E5%85%A5%E5%AE%B9%E5%99%A8"><span class="toc-number">1.2.4.</span> <span class="toc-text">1.4 启动并进入容器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-%E6%BF%80%E6%B4%BBConda%E7%8E%AF%E5%A2%83"><span class="toc-number">1.2.5.</span> <span class="toc-text">1.5 激活Conda环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-%E5%85%8B%E9%9A%86-RKNN-Toolkit2-%E4%BB%93%E5%BA%93"><span class="toc-number">1.2.6.</span> <span class="toc-text">1.6 克隆 RKNN-Toolkit2 仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-7-%E5%AE%89%E8%A3%85-Toolkit2-%E6%9C%AC%E4%BD%93"><span class="toc-number">1.2.7.</span> <span class="toc-text">1.7 安装 Toolkit2 本体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-8-%E9%AA%8C%E8%AF%81%E5%AE%89%E8%A3%85"><span class="toc-number">1.2.8.</span> <span class="toc-text">1.8 验证安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E8%BD%AC%E6%8D%A2%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.3.</span> <span class="toc-text">二 转换模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%85%8B%E9%9A%86-rknn-model-zoo-%E4%BB%A3%E7%A0%81%E4%BB%93%E5%BA%93"><span class="toc-number">1.3.1.</span> <span class="toc-text">2.1 克隆 rknn_model_zoo 代码仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E4%B8%8B%E8%BD%BD-yolov5s-relu-onnx-%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.3 下载 yolov5s_relu.onnx 模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-ONNX%E8%BD%AC%E6%8D%A2%E4%B8%BARKNN%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.3.3.</span> <span class="toc-text">2.4 ONNX转换为RKNN模型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%A8%A1%E5%9E%8B%E6%9D%BF%E7%AB%AF%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.4.</span> <span class="toc-text">三 模型板端运行环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="toc-number">1.4.1.</span> <span class="toc-text">3.1 创建文件夹</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%B8%8A%E4%BC%A0%E6%A8%A1%E5%9E%8B%E6%96%87%E4%BB%B6%E5%92%8C%E5%85%8B%E9%9A%86-rknn-model-zoo-%E4%BB%A3%E7%A0%81%E4%BB%93%E5%BA%93"><span class="toc-number">1.4.2.</span> <span class="toc-text">3.2 上传模型文件和克隆 rknn_model_zoo 代码仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%88%9B%E5%BB%BApython%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83%E5%92%8C%E5%AE%89%E8%A3%85rknn-toolkit-lite2"><span class="toc-number">1.4.3.</span> <span class="toc-text">3.3 创建python虚拟环境和安装rknn_toolkit_lite2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E9%AA%8C%E8%AF%81%E5%AE%89%E8%A3%85"><span class="toc-number">1.4.4.</span> <span class="toc-text">3.4 验证安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-%E4%BB%A3%E7%A0%81%E5%85%BC%E5%AE%B9%E4%BF%AE%E6%94%B9"><span class="toc-number">1.4.5.</span> <span class="toc-text">3.5 代码兼容修改</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.5.</span> <span class="toc-text">四 运行模型</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/09/Rock-5T-yolov5/" title="Rock 5T yolov5">Rock 5T yolov5</a><time datetime="2026-05-09T02:03:07.000Z" title="发表于 2026-05-09 10:03:07">2026-05-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/04/26/rock-5T-Qwen2-5-3B/" title="rock 5T-Qwen2.5-3B">rock 5T-Qwen2.5-3B</a><time datetime="2026-04-26T04:19:30.000Z" title="发表于 2026-04-26 12:19:30">2026-04-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/04/18/orangepi-ai-pro-ChatGLM3-6B/" title="orangepi-ai-pro-ChatGLM3-6B">orangepi-ai-pro-ChatGLM3-6B</a><time datetime="2026-04-18T05:14:23.000Z" title="发表于 2026-04-18 13:14:23">2026-04-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/04/16/Radxa-Cubie-A7S-Gemma/" title="Radxa Cubie A7S Gemma4 (CPU)">Radxa Cubie A7S Gemma4 (CPU)</a><time datetime="2026-04-16T02:27:58.000Z" title="发表于 2026-04-16 10:27:58">2026-04-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/04/14/orangepi-ai-pro-Gemma-4/" title="orangepi ai pro-Gemma 4">orangepi ai pro-Gemma 4</a><time datetime="2026-04-14T09:05:07.000Z" title="发表于 2026-04-14 17:05:07">2026-04-14</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By ruoxie</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.1</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.3</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'ruoxie188/ruoxie188.github.io',
+      'data-repo-id': 'R_kgDORAXi_Q',
+      'data-category-id': 'DIC_kwDORAXi_c4C4cTS',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><div id="spine-container"></div><script>
+  // --- 1. [新增] 维什戴尔加载逻辑 ---
+  function initWisadel() {
+    if (typeof spine === 'undefined') { setTimeout(initWisadel, 500); return; }
+    if (!document.querySelector('#spine-container canvas')) {
+      new spine.SpinePlayer("spine-container", {
+        skelUrl: "/spine/wisadel/wisadel.skel",
+        atlasUrl: "/spine/wisadel/wisadel.atlas",
+        animation: "Move", // 如果不出人，尝试改成 "Run" 或 "Idle"
+        premultipliedAlpha: true,
+        backgroundColor: "#00000000",
+        alpha: true,
+        showControls: false,
+        debug: false
+      });
+    }
+  }
+
+  // --- 2. [保留] 你原本的 GitHub 贡献墙逻辑 ---
+  function finalStyleInject() {
+    var target = document.getElementById('recent-posts');
+    if (!target || document.getElementById('gh-perfect-card')) return;
+    var card = document.createElement('div');
+    card.id = 'gh-perfect-card';
+    card.className = 'recent-post-item'; 
+    card.style.padding = '20px 30px';
+    card.style.flexDirection = 'column';
+    card.style.alignItems = 'flex-start';
+    card.innerHTML = `
+      <div style="font-size: 1.2em; font-weight: bold; margin-bottom: 15px; color: var(--font-color);">
+        <i class="fab fa-github" style="margin-right:8px"></i>GitHub 贡献墙
+      </div>
+      <div style="width:100%; overflow-x: auto;">
+        <img src="https://ghchart.rshah.org/40c463/ruoxie188" 
+             style="width:100%; min-width: 650px; height:auto; display:block;" 
+             alt="GitHub Contribution Chart">
+      </div>`;
+    target.insertBefore(card, target.firstChild);
+    var oldCard = document.getElementById('gh-test-card');
+    if (oldCard) oldCard.remove();
+  }
+
+  // 统一启动
+  finalStyleInject();
+  initWisadel();
+  document.addEventListener('pjax:complete', function() { finalStyleInject(); initWisadel(); });
+</script>
+<style>
+  #atmosphere-btn { position: fixed; right: 10px; bottom: 205px; width: 35px; height: 35px; background: #49b1f5; color: #fff; border-radius: 5px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10001; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: all 0.3s; }
+  #atmosphere-menu { position: fixed; right: 65px; bottom: 200px; background: var(--card-bg); border-radius: 8px; display: flex; padding: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 10000; transition: all 0.3s; transform: scale(0.8); opacity: 0; pointer-events: none; transform-origin: right center; }
+  #atmosphere-menu.show { opacity: 1; transform: scale(1); pointer-events: all; }
+  .atm-item { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; margin: 2px; border-radius: 4px; transition: 0.2s; font-size: 16px; }
+  .atm-item:hover, .atm-item.active { background: #49b1f5; color: #fff; }
+  #atm-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; pointer-events: none; }
+</style>
+<div id="atmosphere-btn" title="特效菜单"><i class="fas fa-magic"></i></div>
+<div id="atmosphere-menu">
+  <div class="atm-item" data-type="snow" title="雪花">❄️</div>
+  <div class="atm-item" data-type="sakura" title="樱花">🌸</div>
+  <div class="atm-item" data-type="heart" title="爱心">❤️</div>
+  <div class="atm-item" data-type="star" title="星星">✨</div>
+  <div class="atm-item" data-type="off" title="关闭特效">🚫</div>
+</div>
+<script>
+  (function() {
+    let canvas, ctx, animationFrame, particles = [], currentType = 'off';
+    const btn = document.getElementById('atmosphere-btn');
+    const menu = document.getElementById('atmosphere-menu');
+    class Particle {
+      constructor(type) { this.type = type; this.reset(); }
+      reset() { this.x = Math.random() * window.innerWidth; this.y = Math.random() * window.innerHeight - window.innerHeight; this.size = Math.random() * 3 + 2; this.speed = Math.random() * 2 + 1; this.velX = Math.random() * 1 - 0.5; this.opacity = Math.random() * 0.5 + 0.3; this.color = this.type === 'snow' ? '#fff' : (this.type === 'sakura' ? '#ffb7c5' : (this.type === 'star' ? '#ffe066' : '#ff4d4d')); }
+      update() { this.y += this.speed; this.x += this.velX; if (this.y > window.innerHeight) this.reset(); }
+      draw() { ctx.fillStyle = this.color; ctx.globalAlpha = this.opacity; ctx.beginPath(); if (this.type === 'snow' || this.type === 'star') { ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); } else if (this.type === 'heart') { ctx.font = (this.size * 5) + 'px serif'; ctx.fillText('❤️', this.x, this.y); } else if (this.type === 'sakura') { ctx.ellipse(this.x, this.y, this.size * 2, this.size, Math.random() * 360, 0, Math.PI * 2); } ctx.fill(); }
+    }
+    function render() { ctx.clearRect(0, 0, window.innerWidth, window.innerHeight); particles.forEach(p => { p.update(); p.draw(); }); animationFrame = requestAnimationFrame(render); }
+    function changeEffect(type) { currentType = type; localStorage.setItem('atm-type', type); if (animationFrame) cancelAnimationFrame(animationFrame); if (canvas) canvas.remove(); particles = []; if (type === 'off') return; canvas = document.createElement('canvas'); canvas.id = 'atm-canvas'; document.body.appendChild(canvas); ctx = canvas.getContext('2d'); canvas.width = window.innerWidth; canvas.height = window.innerHeight; for (let i = 0; i < 80; i++) particles.push(new Particle(type)); render(); }
+    if(btn) { btn.onclick = (e) => { e.stopPropagation(); menu.classList.toggle('show'); };
+      document.querySelectorAll('.atm-item').forEach(item => { item.onclick = function() { document.querySelectorAll('.atm-item').forEach(i => i.classList.remove('active')); this.classList.add('active'); changeEffect(this.dataset.type); menu.classList.remove('show'); }; });
+      document.addEventListener('click', () => menu ? menu.classList.remove('show') : null);
+      window.addEventListener('resize', () => { if (canvas) { canvas.width = window.innerWidth; canvas.height = window.innerHeight; } });
+      const savedType = localStorage.getItem('atm-type') || 'off'; if (savedType !== 'off') { changeEffect(savedType); const activeItem = document.querySelector(`[data-type="${savedType}"]`); if (activeItem) activeItem.classList.add('active'); }
+    }
+  })();
+</script>
+<script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
